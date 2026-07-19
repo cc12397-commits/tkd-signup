@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)file:///C:/Users/vios1/Downloads/taekwondo_v2_2.html -->
+<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跆拳道比賽報名系統</title>
+<style>
+  :root {
+    --red:#C0392B;--red-light:#E74C3C;--red-bg:#FDF2F2;
+    --dark:#1C1C2E;--gold:#D4A017;--gold-light:#F5C842;
+    --blue:#1A5276;--blue-light:#2980B9;
+    --bg:#F4F6F8;--white:#FFF;--gray:#7F8C8D;
+    --border:#DDE1E7;--text:#2C3E50;--green:#16A34A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);font-family:'Helvetica Neue',Arial,'PingFang TC',sans-serif;color:var(--text);min-height:100vh;}
+  button,input,select{font-family:inherit;}
+  @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+  .hero{background:linear-gradient(135deg,var(--dark) 0%,#2C1654 60%,var(--red) 100%);padding:24px 20px 0;}
+  .hero-inner{max-width:680px;margin:0 auto;}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .hero-label{color:var(--gold-light);font-size:10px;font-weight:700;letter-spacing:.16em;}
+  .hero-title{color:#fff;font-size:22px;font-weight:900;margin-top:2px;}
+  .hero-title span{color:var(--gold-light);}
+  .sync-badge{display:flex;align-items:center;gap:5px;margin-top:5px;}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:#888;}
+  .sync-txt{font-size:10px;color:#666;}
+  .coach-btn{background:rgba(255,255,255,.12);color:#aaa;border:none;border-radius:20px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;}
+  .coach-btn.active{background:var(--gold-light);color:var(--dark);}
+  .coach-login-box{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;margin-top:10px;display:flex;gap:8px;}
+  .coach-login-box input{flex:1;border-radius:7px;border:none;padding:8px 11px;background:rgba(255,255,255,.1);color:#fff;font-size:13px;}
+  .coach-login-box button{background:var(--gold-light);color:var(--dark);border:none;border-radius:7px;padding:8px 13px;font-weight:700;font-size:13px;cursor:pointer;}
+
+  .comp-tabs{display:flex;gap:8px;}
+  .comp-tab{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px 12px 0 0;padding:12px 14px 16px;cursor:pointer;transition:.2s;}
+  .comp-tab.active{background:var(--white);}
+  .comp-tab.active .ct-name{color:var(--dark);}
+  .comp-tab.active .ct-meta{color:var(--gray);}
+  .comp-tab.active .ct-badge{background:var(--red-bg);color:var(--red);}
+  .ct-name{color:#fff;font-size:14px;font-weight:700;margin-bottom:4px;}
+  .ct-meta{color:rgba(255,255,255,.55);font-size:10px;line-height:1.6;}
+  .ct-badge{display:inline-block;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-top:4px;}
+
+  .body{max-width:680px;margin:0 auto;padding:20px 14px 80px;}
+  .nav-tabs{display:flex;background:#fff;border-radius:12px;padding:4px;margin-bottom:18px;gap:3px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  .nav-btn{flex:1;padding:9px;border:none;background:none;border-radius:9px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s;}
+  .nav-btn.on{background:var(--dark);color:var(--gold-light);}
+
+  .card{background:#fff;border-radius:16px;padding:20px 18px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:14px;}
+  .card-title{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+  .field{margin-bottom:13px;}
+  .field label{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:5px;display:block;}
+  .field input[type=text],.field input[type=number],.field input[type=tel],.field input[type=password],.field select{width:100%;padding:10px 12px;border-radius:9px;font-size:14px;border:1.5px solid var(--border);outline:none;color:var(--text);background:#fff;transition:border .15s;}
+  .field input:focus,.field select:focus{border-color:var(--red);}
+  .field input.err,.field select.err{border-color:var(--red-light);}
+  .field-err{color:var(--red-light);font-size:11px;margin-top:3px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .gender-row{display:flex;gap:8px;}
+  .gender-btn{flex:1;padding:9px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s;}
+  .gender-btn.on{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .event-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .event-btn{padding:9px 14px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s;}
+  .event-btn.on{border-color:var(--blue-light);background:#EBF5FB;color:var(--blue);}
+
+  .fee-box{background:linear-gradient(135deg,var(--dark),#2C1654);border-radius:12px;padding:14px 16px;margin:14px 0;}
+  .fee-row{display:flex;justify-content:space-between;align-items:center;}
+  .fee-lbl{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:3px;}
+  .fee-items{font-size:11px;color:rgba(255,255,255,.65);}
+  .fee-amt{font-size:24px;font-weight:900;color:var(--gold-light);}
+  .submit-btn{width:100%;padding:14px;border-radius:12px;border:none;background:var(--red);color:#fff;font-weight:800;font-size:16px;cursor:pointer;}
+  .submit-btn:disabled{background:#aaa;cursor:not-allowed;}
+
+  .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .filter-btn{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;}
+  .filter-btn.on{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
+  .sum-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:16px;}
+  .sum-card{background:#fff;border-radius:11px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .sum-val{font-size:22px;font-weight:900;color:var(--dark);}
+  .sum-val.red{color:var(--red);}
+  .sum-val.gold{color:var(--gold);}
+  .sum-lbl{font-size:10px;color:var(--gray);margin-top:2px;}
+
+  .reg-list{display:flex;flex-direction:column;gap:9px;}
+  .reg-card{background:#fff;border-radius:12px;padding:13px 15px;box-shadow:0 1px 5px rgba(0,0,0,.05);border-left:4px solid var(--border);animation:slideIn .2s ease;}
+  .reg-card.poomse{border-left-color:var(--blue-light);}
+  .reg-card.sparring{border-left-color:var(--red);}
+  .reg-card.speed{border-left-color:var(--gold);}
+  .reg-card.multi{border-left-color:#8E44AD;}
+  .reg-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+  .reg-idx{width:22px;height:22px;border-radius:5px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray);flex-shrink:0;}
+  .reg-name{font-weight:700;font-size:15px;flex:1;}
+  .reg-fee{font-weight:900;font-size:15px;color:var(--red);flex-shrink:0;}
+  .reg-del{background:#FDF2F2;border:none;border-radius:6px;padding:4px 9px;font-size:12px;color:var(--red);cursor:pointer;flex-shrink:0;}
+  .reg-del.confirm{background:var(--red);color:#fff;font-weight:700;}
+  .reg-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;}
+  .tag{border-radius:5px;padding:2px 7px;font-size:10px;font-weight:600;}
+  .tag-comp{background:#F0FFF4;color:var(--green);}
+  .tag-grade{background:#F9F0FF;color:#8E44AD;}
+  .tag-belt{background:#FEF9E7;color:var(--gold);}
+  .tag-gender{background:#FDF2F8;color:#9B59B6;}
+  .tag-event{background:var(--red-bg);color:var(--red);}
+  .tag-event.blue{background:#EBF5FB;color:var(--blue-light);}
+  .tag-event.purple{background:#F9F0FF;color:#8E44AD;}
+  .reg-detail{font-size:11px;color:var(--gray);}
+  .export-btn{background:var(--dark);color:var(--gold-light);border:none;border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+
+  .coach-panel{background:#fff;border-radius:16px;padding:20px 18px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:14px;border:2px solid var(--gold-light);}
+  .coach-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .coach-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+  .coach-title{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:12px;}
+  .comp-config{background:var(--bg);border-radius:10px;padding:14px;margin-bottom:10px;}
+  .comp-config-title{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:10px;}
+  .config-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .config-field label{font-size:10px;font-weight:700;color:var(--gray);display:block;margin-bottom:3px;}
+  .config-field input{width:100%;padding:7px 10px;border-radius:7px;border:1.5px solid var(--border);font-size:13px;outline:none;}
+  .config-field input:focus{border-color:var(--gold);}
+  .config-field.full{grid-column:1/-1;}
+  .fee-config{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .fee-config-item{flex:1;min-width:80px;background:#fff;border-radius:7px;padding:8px 10px;border:1.5px solid var(--border);}
+  .fee-config-item label{font-size:10px;color:var(--gray);font-weight:700;display:block;margin-bottom:3px;}
+  .fee-config-item input{width:100%;border:none;outline:none;font-size:14px;font-weight:700;color:var(--dark);}
+  .save-config-btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--gold);color:var(--dark);font-weight:800;font-size:14px;cursor:pointer;margin-top:10px;}
+  .clear-btn{width:100%;padding:12px;border-radius:10px;border:2px solid var(--red);background:#fff;color:var(--red);font-weight:800;font-size:14px;cursor:pointer;transition:.15s;}
+  .clear-btn.confirm{background:var(--red);color:#fff;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.hidden{display:none;}
+  .modal-box{background:#fff;border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+  .modal-title{font-size:20px;font-weight:800;color:var(--dark);line-height:1.4;margin-bottom:6px;}
+  .modal-title span{color:var(--red);}
+  .modal-sub{font-size:13px;color:var(--gray);}
+  .modal-btns{display:flex;gap:10px;margin-top:20px;}
+  .modal-cancel{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--gray);font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;}
+  .modal-confirm{flex:1;padding:12px;border-radius:10px;border:none;background:var(--red);color:#fff;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;}
+
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--gold-light);padding:11px 26px;border-radius:40px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.2);animation:fadeUp .22s ease;white-space:nowrap;}
+  .toast.hidden{display:none;}
+  .hidden{display:none!important;}
+  @media(max-width:480px){.row2,.config-grid{grid-template-columns:1fr;}.comp-tabs{flex-direction:column;}.comp-tab{border-radius:10px;}.hero-title{font-size:18px;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div>
+        <div class="hero-label">TAEKWONDO · 2025</div>
+        <div class="hero-title">跆拳道比賽<span>報名系統</span></div>
+        <div class="sync-badge">
+          <span class="sync-dot" id="syncDot" style="background: rgb(248, 113, 113);"></span>
+          <span class="sync-txt" id="syncTxt" style="color: rgb(248, 113, 113);">離線模式</span>
+        </div>
+      </div>
+      <button class="coach-btn" id="coachBtn" onclick="toggleCoachLogin()">教練</button>
+    </div>
+    <div class="coach-login-box hidden" id="coachLoginBox">
+      <input type="password" id="coachPwInput" placeholder="教練密碼" onkeydown="if(event.key===&#39;Enter&#39;)doCoachLogin()">
+      <button onclick="doCoachLogin()">登入</button>
+    </div>
+    <div class="comp-tabs" id="compTabs"><div class="comp-tab active"><div class="ct-name">🏆 樹運盃</div><div class="ct-meta">📅 2025/8/9（日）<br>📍 樹林高中體育館<br>⏰ 截止 7/17</div><span class="ct-badge">競速踢擊 · 品勢 · 對打</span></div><div class="comp-tab"><div class="ct-name">🏆 中華盃</div><div class="ct-meta">📅 2025/8/16（日）<br>📍 三峽國中體育館<br>⏰ 截止 7/25</div><span class="ct-badge">品勢 · 對打</span></div></div>
+  </div>
+</div>
+
+<div class="body">
+  <div class="nav-tabs">
+    <button class="nav-btn on" id="navForm" onclick="switchNav(&#39;form&#39;)">📝 填寫報名</button>
+    <button class="nav-btn" id="navList" onclick="switchNav(&#39;list&#39;)">📋 報名名單 (0)</button>
+    <button class="nav-btn hidden" id="navCoach" onclick="switchNav(&#39;coach&#39;)">⚙️ 教練管理</button>
+  </div>
+
+  <!-- FORM -->
+  <div id="pageForm">
+    <div class="card">
+      <div class="card-title">選手基本資料</div>
+      <div class="field"><label>姓名 *</label><input type="text" id="fName" placeholder="請輸入姓名"><div class="field-err hidden" id="errName"></div></div>
+      <div class="row2">
+        <div class="field"><label>性別 *</label><div class="gender-row"><button class="gender-btn" id="gM" onclick="setGender(&#39;男&#39;)">♂ 男</button><button class="gender-btn" id="gF" onclick="setGender(&#39;女&#39;)">♀ 女</button></div><div class="field-err hidden" id="errGender"></div></div>
+        <div class="field"><label>年齡（歲）</label><input type="number" id="fAge" placeholder="例：9" min="3" max="50"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>就讀年級 *</label><select id="fGrade"><option value="">請選擇</option><option>幼兒園</option><option>小一</option><option>小二</option><option>小三</option><option>小四</option><option>小五</option><option>小六</option><option>國一</option><option>國二</option><option>國三</option><option>高一</option><option>高二</option><option>高三</option><option>成人</option></select><div class="field-err hidden" id="errGrade"></div></div>
+        <div class="field"><label>帶級 *</label><select id="fBelt"><option value="">請選擇</option><option>白帶</option><option>黃帶</option><option>綠帶</option><option>藍帶</option><option>紅帶</option><option>黑帶</option><option>色帶（非黑帶）</option></select><div class="field-err hidden" id="errBelt"></div></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>體重（kg）</label><input type="number" id="fWeight" placeholder="例：32" min="10" max="120" step="0.5"></div>
+        <div class="field"><label>道館/學校</label><input type="text" id="fSchool" placeholder="例：OO道館"></div>
+      </div>
+      <div class="field"><label>家長聯絡電話</label><input type="tel" id="fPhone" placeholder="聯絡電話"></div>
+    </div>
+    <div class="card">
+      <div class="card-title" id="eventCardTitle">報名項目 — 樹運盃</div>
+      <div class="event-grid" id="eventGrid"><button class="event-btn">競速踢擊 $500</button><button class="event-btn">品勢 $700</button><button class="event-btn">對打 $700</button></div>
+      <div class="field-err hidden" id="errEvent" style="margin-top:8px"></div>
+      <div class="field hidden" id="wClassField" style="margin-top:12px">
+        <label>對打量級</label>
+        <select id="fWClass"><option value="">請選擇量級</option><option>25公斤以下</option><option>27公斤以下</option><option>30公斤以下</option><option>31-34公斤</option><option>34-37公斤</option><option>37-40公斤</option><option>40公斤級</option><option>40-44公斤</option><option>44公斤以下</option><option>44-46公斤</option><option>46公斤級</option><option>45-48公斤</option><option>48-51公斤</option><option>51-55公斤</option><option>55公斤以上</option><option>64公斤級</option><option>其他</option></select>
+      </div>
+    </div>
+    <div class="fee-box"><div class="fee-row"><div><div class="fee-lbl">報名費用</div><div class="fee-items" id="feeItems">尚未選擇項目</div></div><div class="fee-amt" id="feeAmt">$0</div></div></div>
+    <div class="field" style="margin-bottom:14px"><label>備註</label><input type="text" id="fNote" placeholder="其他說明…"></div>
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">送出報名</button>
+  </div>
+
+  <!-- LIST -->
+  <div id="pageList" class="hidden">
+    <div class="filter-row">
+      <button class="filter-btn on" onclick="setFilter(&#39;all&#39;,this)">全部</button>
+      <button class="filter-btn" id="filterC0" onclick="setFilter(&#39;c0&#39;,this)">樹運盃</button>
+      <button class="filter-btn" id="filterC1" onclick="setFilter(&#39;c1&#39;,this)">中華盃</button>
+      <button class="filter-btn" onclick="setFilter(&#39;品勢&#39;,this)">品勢</button>
+      <button class="filter-btn" onclick="setFilter(&#39;對打&#39;,this)">對打</button>
+      <button class="filter-btn" onclick="setFilter(&#39;競速踢擊&#39;,this)">競速踢擊</button>
+    </div>
+    <div class="sum-row" id="sumRow">
+    <div class="sum-card"><div class="sum-val">0</div><div class="sum-lbl">報名人次</div></div>
+    <div class="sum-card"><div class="sum-val red">$0</div><div class="sum-lbl">費用合計</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="export-btn" onclick="exportCSV()">⬇ 匯出 CSV</button>
+    </div>
+    <div class="reg-list" id="regList"><div style="text-align:center;color:var(--gray);padding:40px;background:#fff;border-radius:13px">尚無報名資料</div></div>
+  </div>
+
+  <!-- COACH -->
+  <div id="pageCoach" class="hidden">
+    <div class="coach-panel">
+      <div class="coach-section">
+        <div class="coach-title">🏆 比賽資訊設定</div>
+        <div id="compConfigArea"><div class="comp-config"><div class="comp-config-title">比賽 1</div>
+      <div class="config-grid">
+        <div class="config-field full"><label>比賽名稱</label><input id="cc0_name" value="樹運盃"></div>
+        <div class="config-field"><label>比賽日期</label><input id="cc0_date" value="2025/8/9（日）"></div>
+        <div class="config-field"><label>報名截止</label><input id="cc0_deadline" value="7/17"></div>
+        <div class="config-field full"><label>比賽地點</label><input id="cc0_place" value="樹林高中體育館"></div>
+        <div class="config-field full"><label>報名項目（逗號分隔）</label><input id="cc0_events" value="競速踢擊,品勢,對打"></div>
+      </div>
+      <div class="fee-config"><div class="fee-config-item"><label>競速踢擊 費用</label><input id="cc0_fee_競速踢擊" value="500" type="number"></div><div class="fee-config-item"><label>品勢 費用</label><input id="cc0_fee_品勢" value="700" type="number"></div><div class="fee-config-item"><label>對打 費用</label><input id="cc0_fee_對打" value="700" type="number"></div></div></div><div class="comp-config"><div class="comp-config-title">比賽 2</div>
+      <div class="config-grid">
+        <div class="config-field full"><label>比賽名稱</label><input id="cc1_name" value="中華盃"></div>
+        <div class="config-field"><label>比賽日期</label><input id="cc1_date" value="2025/8/16（日）"></div>
+        <div class="config-field"><label>報名截止</label><input id="cc1_deadline" value="7/25"></div>
+        <div class="config-field full"><label>比賽地點</label><input id="cc1_place" value="三峽國中體育館"></div>
+        <div class="config-field full"><label>報名項目（逗號分隔）</label><input id="cc1_events" value="品勢,對打"></div>
+      </div>
+      <div class="fee-config"><div class="fee-config-item"><label>品勢 費用</label><input id="cc1_fee_品勢" value="700" type="number"></div><div class="fee-config-item"><label>對打 費用</label><input id="cc1_fee_對打" value="800" type="number"></div></div></div></div>
+        <button class="save-config-btn" onclick="saveConfig()">💾 儲存比賽設定</button>
+      </div>
+      <div class="coach-section">
+        <div class="coach-title">🗑 清空報名資料（準備下次比賽）</div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px">比賽結束後點此清空所有報名資料，比賽設定會保留，同一個網址繼續給下次比賽使用。</p>
+        <button class="clear-btn" id="clearBtn" onclick="handleClear()">清空所有報名資料</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">取消</button>
+      <button class="modal-confirm" id="modalConfirm">確定刪除</button>
+    </div>
+  </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const GAS = "https://script.google.com/macros/s/AKfycbxBeWtE_17FSYU8FuS9JRfvm0C8iUB42hH3ko-ahI4c5AR78AqThqgnAKdmlCx2QDqhaQ/exec";
+const COACH_PW = "coach2025";
+const SEEDED_KEY = "tkd_seeded_v1";
+
+// ── 既有資料（第一次載入時自動寫入 Sheet）──────────────────
+const SEED_DATA = [
+  {comp:"中華盃",name:"蔡旻諼",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+  {comp:"中華盃",name:"蔡沐希",gender:"",age:0,grade:"幼兒園",belt:"",weight:"",weightClass:"25公斤以下",events:"對打",fee:800,school:"",phone:"",note:""},
+  {comp:"中華盃",name:"趙婕羽",gender:"女",age:7,grade:"小一",belt:"色帶（非黑帶）",weight:"",weightClass:"",events:"對打、品勢",fee:1500,school:"",phone:"",note:""},
+  {comp:"中華盃",name:"馮瑄妤",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"40公斤級",events:"對打",fee:800,school:"",phone:"",note:"國小"},
+  {comp:"中華盃",name:"陳宥甯",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"46公斤級",events:"對打",fee:800,school:"",phone:"",note:"國小"},
+  {comp:"中華盃",name:"吳若宸",gender:"",age:0,grade:"",belt:"黑帶",weight:"27",weightClass:"27公斤以下",events:"對打",fee:800,school:"",phone:"",note:"國小"},
+  {comp:"中華盃",name:"陳威霖",gender:"",age:0,grade:"小二",belt:"",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+  {comp:"中華盃",name:"陳沅璁",gender:"",age:0,grade:"幼兒園",belt:"",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+  {comp:"中華盃",name:"蔡承曄",gender:"",age:0,grade:"",belt:"色帶（非黑帶）",weight:"",weightClass:"31-34公斤",events:"對打",fee:800,school:"",phone:"",note:"國小"},
+  {comp:"中華盃",name:"陳宣諭",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"44-46公斤",events:"對打",fee:800,school:"",phone:"",note:"國小"},
+  {comp:"中華盃",name:"石宸菲",gender:"",age:0,grade:"",belt:"",weight:"",weightClass:"34-37公斤",events:"對打",fee:800,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"趙婕羽",gender:"女",age:7,grade:"小一",belt:"色帶（非黑帶）",weight:"",weightClass:"",events:"對打、品勢",fee:1400,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"蔡旻諼",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"蔡沐希",gender:"",age:0,grade:"幼兒園",belt:"",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"陳宥甯",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"46公斤級",events:"對打",fee:700,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"吳若宸",gender:"",age:0,grade:"",belt:"黑帶",weight:"27",weightClass:"27公斤以下",events:"對打",fee:700,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"陳廷宇",gender:"",age:0,grade:"",belt:"",weight:"",weightClass:"",events:"競速踢擊",fee:500,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"陳廷翰",gender:"",age:0,grade:"國中",belt:"色帶（非黑帶）",weight:"",weightClass:"45-48公斤",events:"對打",fee:700,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"羅彥翔",gender:"",age:0,grade:"國中",belt:"",weight:"",weightClass:"48-51公斤",events:"對打",fee:700,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"蔡承曄",gender:"",age:0,grade:"",belt:"色帶（非黑帶）",weight:"",weightClass:"31-34公斤",events:"對打",fee:700,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"鄭宇芳",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"64公斤級",events:"對打",fee:700,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"張語弘",gender:"",age:0,grade:"國中",belt:"",weight:"",weightClass:"51-55公斤",events:"對打",fee:700,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"張語揚",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"40-44公斤",events:"對打",fee:700,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"陳宣諭",gender:"",age:0,grade:"",belt:"黑帶",weight:"",weightClass:"44-46公斤",events:"對打",fee:700,school:"",phone:"",note:"國小"},
+  {comp:"樹運盃",name:"陳威霖",gender:"",age:0,grade:"小二",belt:"",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+  {comp:"樹運盃",name:"陳沅璁",gender:"",age:0,grade:"幼兒園",belt:"",weight:"",weightClass:"",events:"品勢",fee:700,school:"",phone:"",note:""},
+];
+
+// ── 預設比賽設定 ──────────────────────────────────────────
+let cfg = {
+  comp0_name:"樹運盃",comp0_date:"2025/8/9（日）",comp0_place:"樹林高中體育館",
+  comp0_deadline:"7/17",comp0_events:"競速踢擊,品勢,對打",
+  comp0_fee_競速踢擊:"500",comp0_fee_品勢:"700",comp0_fee_對打:"700",
+  comp1_name:"中華盃",comp1_date:"2025/8/16（日）",comp1_place:"三峽國中體育館",
+  comp1_deadline:"7/25",comp1_events:"品勢,對打",
+  comp1_fee_品勢:"700",comp1_fee_對打:"800",
+};
+
+let regs=[];
+let selComp=0,selGender="",selEvents=[],curFilter="all";
+let isCoach=false,pendingDelId=null,clearConfirm=false,clearTimer=null,toastTimer=null;
+
+function $(id){return document.getElementById(id);}
+function genId(){return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+
+function setSyncStatus(msg,color){
+  $("syncDot").style.background=color;
+  $("syncTxt").textContent=msg;
+  $("syncTxt").style.color=color==="#4ade80"?"#4ade80":color==="#f87171"?"#f87171":"#e8c547";
+}
+function showToast(msg){
+  const t=$("toast");t.textContent=msg;t.classList.remove("hidden");
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("hidden"),2400);
+}
+
+function getComp(i){
+  const evts=(cfg["comp"+i+"_events"]||"").split(",").map(s=>s.trim()).filter(Boolean);
+  const fees={};evts.forEach(ev=>{fees[ev]=parseInt(cfg["comp"+i+"_fee_"+ev])||0;});
+  return{name:cfg["comp"+i+"_name"]||"比賽"+(i+1),date:cfg["comp"+i+"_date"]||"",place:cfg["comp"+i+"_place"]||"",deadline:cfg["comp"+i+"_deadline"]||"",events:evts,fees};
+}
+
+async function postGAS(body){
+  const r=await fetch(GAS,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(body)});
+  return r.json();
+}
+
+// ── 第一次載入時寫入既有資料 ────────────────────────────────
+async function seedIfNeeded(){
+  if(localStorage.getItem(SEEDED_KEY)) return;
+  setSyncStatus("首次初始化，寫入既有資料…","#e8c547");
+  try {
+    for(const reg of SEED_DATA){
+      await postGAS({action:"addReg",reg:{...reg,id:genId()}});
+    }
+    localStorage.setItem(SEEDED_KEY,"1");
+    setSyncStatus("初始化完成 ✓","#4ade80");
+  } catch(e){
+    setSyncStatus("初始化失敗，請重試","#f87171");
+  }
+}
+
+async function loadAll(){
+  setSyncStatus("同步中…","#e8c547");
+  try {
+    const rc=await fetch(GAS+"?action=getConfig");
+    const dc=await rc.json();
+    if(dc.ok&&Object.keys(dc.config).length>0) cfg={...cfg,...dc.config};
+
+    const rr=await fetch(GAS+"?action=getRegs");
+    const dr=await rr.json();
+    if(dr.ok&&dr.rows&&dr.rows.length>1){
+      regs=dr.rows.slice(1).map((row,i)=>({
+        id:"gas_"+i,comp:row[0]||"",name:row[1]||"",gender:row[2]||"",
+        age:row[3]||0,grade:row[4]||"",belt:row[5]||"",weight:row[6]||"",
+        weightClass:row[7]||"",events:(row[8]||"").split("、").filter(Boolean),
+        fee:parseInt(row[9])||0,school:row[10]||"",phone:row[11]||"",note:row[12]||""
+      }));
+    } else regs=[];
+    setSyncStatus("已同步 ✓","#4ade80");
+  } catch(e){
+    setSyncStatus("離線模式","#f87171");
+  }
+  renderAll();
+}
+
+function renderAll(){
+  renderCompTabs();renderEventGrid();renderFee();renderList();renderCoachPanel();
+  $("filterC0").textContent=getComp(0).name;
+  $("filterC1").textContent=getComp(1).name;
+  $("navList").textContent="📋 報名名單 ("+regs.length+")";
+}
+
+function renderCompTabs(){
+  const tabs=$("compTabs");tabs.innerHTML="";
+  [0,1].forEach(i=>{
+    const c=getComp(i);
+    const div=document.createElement("div");
+    div.className="comp-tab"+(selComp===i?" active":"");
+    div.onclick=()=>{selComp=i;selEvents=[];renderCompTabs();renderEventGrid();renderFee();$("eventCardTitle").textContent="報名項目 — "+c.name;};
+    div.innerHTML=`<div class="ct-name">🏆 ${c.name}</div><div class="ct-meta">📅 ${c.date}<br>📍 ${c.place}<br>⏰ 截止 ${c.deadline}</div><span class="ct-badge">${c.events.join(" · ")}</span>`;
+    tabs.appendChild(div);
+  });
+  $("eventCardTitle").textContent="報名項目 — "+getComp(selComp).name;
+}
+
+function setGender(g){selGender=g;$("gM").classList.toggle("on",g==="男");$("gF").classList.toggle("on",g==="女");}
+
+function renderEventGrid(){
+  const comp=getComp(selComp);const grid=$("eventGrid");grid.innerHTML="";
+  comp.events.forEach(ev=>{
+    const btn=document.createElement("button");
+    btn.className="event-btn"+(selEvents.includes(ev)?" on":"");
+    btn.textContent=ev+" $"+comp.fees[ev];
+    btn.onclick=()=>{selEvents=selEvents.includes(ev)?selEvents.filter(e=>e!==ev):[...selEvents,ev];renderEventGrid();renderFee();};
+    grid.appendChild(btn);
+  });
+  $("wClassField").classList.toggle("hidden",!selEvents.includes("對打"));
+}
+
+function renderFee(){
+  const comp=getComp(selComp);
+  if(!selEvents.length){$("feeItems").textContent="尚未選擇項目";$("feeAmt").textContent="$0";return;}
+  const total=selEvents.reduce((s,ev)=>s+(comp.fees[ev]||0),0);
+  $("feeItems").textContent=selEvents.map(ev=>ev+" $"+comp.fees[ev]).join(" ＋ ");
+  $("feeAmt").textContent="$"+total.toLocaleString();
+}
+
+async function handleSubmit(){
+  let ok=true;
+  const name=$("fName").value.trim();
+  if(!name){showErr("errName","請填寫姓名");ok=false;}else hideErr("errName");
+  if(!selGender){showErr("errGender","請選擇性別");ok=false;}else hideErr("errGender");
+  if(!$("fGrade").value){showErr("errGrade","請選擇年級");ok=false;}else hideErr("errGrade");
+  if(!$("fBelt").value){showErr("errBelt","請選擇帶級");ok=false;}else hideErr("errBelt");
+  if(!selEvents.length){showErr("errEvent","請至少選一個報名項目");ok=false;}else hideErr("errEvent");
+  if(selEvents.includes("對打")&&!$("fWClass").value){showErr("errEvent","對打請選擇量級");ok=false;}
+  if(!ok)return;
+  const comp=getComp(selComp);
+  const fee=selEvents.reduce((s,ev)=>s+(comp.fees[ev]||0),0);
+  const reg={id:genId(),comp:comp.name,name,gender:selGender,age:parseInt($("fAge").value)||0,
+    grade:$("fGrade").value,belt:$("fBelt").value,weight:$("fWeight").value,
+    weightClass:$("fWClass").value||"",events:selEvents.join("、"),fee,
+    school:$("fSchool").value.trim(),phone:$("fPhone").value.trim(),note:$("fNote").value.trim()};
+  $("submitBtn").disabled=true;$("submitBtn").textContent="送出中…";
+  setSyncStatus("儲存中…","#e8c547");
+  try {
+    await postGAS({action:"addReg",reg});
+    regs.push({...reg,events:selEvents});
+    showToast("報名成功！"+name+" 已加入 "+comp.name);
+    resetForm();switchNav("list");
+    setSyncStatus("已同步 ✓","#4ade80");
+    $("navList").textContent="📋 報名名單 ("+regs.length+")";
+    renderList();
+  } catch(e){setSyncStatus("儲存失敗","#f87171");showToast("送出失敗，請重試");}
+  finally{$("submitBtn").disabled=false;$("submitBtn").textContent="送出報名";}
+}
+
+function showErr(id,msg){const el=$(id);el.textContent=msg;el.classList.remove("hidden");}
+function hideErr(id){$(id).classList.add("hidden");}
+function resetForm(){
+  $("fName").value="";$("fAge").value="";$("fWeight").value="";
+  $("fSchool").value="";$("fPhone").value="";$("fNote").value="";
+  $("fGrade").value="";$("fBelt").value="";$("fWClass").value="";
+  selGender="";selEvents=[];
+  $("gM").classList.remove("on");$("gF").classList.remove("on");
+  renderEventGrid();renderFee();
+  ["errName","errGender","errGrade","errBelt","errEvent"].forEach(hideErr);
+}
+
+function setFilter(f,btn){curFilter=f;document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("on"));btn.classList.add("on");renderList();}
+
+function getFiltered(){
+  return regs.filter(r=>{
+    if(curFilter==="all")return true;
+    if(curFilter==="c0")return r.comp===getComp(0).name;
+    if(curFilter==="c1")return r.comp===getComp(1).name;
+    const evArr=Array.isArray(r.events)?r.events:(r.events||"").split("、").filter(Boolean);
+    return evArr.includes(curFilter);
+  });
+}
+
+function renderList(){
+  const filtered=getFiltered();
+  const totalFee=filtered.reduce((s,r)=>s+r.fee,0);
+  const byComp={};filtered.forEach(r=>{byComp[r.comp]=(byComp[r.comp]||0)+1;});
+  $("sumRow").innerHTML=`
+    <div class="sum-card"><div class="sum-val">${filtered.length}</div><div class="sum-lbl">報名人次</div></div>
+    <div class="sum-card"><div class="sum-val red">$${totalFee.toLocaleString()}</div><div class="sum-lbl">費用合計</div></div>
+    ${Object.entries(byComp).map(([c,n])=>`<div class="sum-card"><div class="sum-val gold">${n}</div><div class="sum-lbl">${c}</div></div>`).join("")}`;
+  const list=$("regList");list.innerHTML="";
+  if(!filtered.length){list.innerHTML='<div style="text-align:center;color:var(--gray);padding:40px;background:#fff;border-radius:13px">尚無報名資料</div>';return;}
+  filtered.forEach((r,idx)=>{
+    const evArr=Array.isArray(r.events)?r.events:(r.events||"").split("、").filter(Boolean);
+    const cls=evArr.length>1?"multi":evArr[0]==="品勢"?"poomse":evArr[0]==="對打"?"sparring":evArr[0]==="競速踢擊"?"speed":"";
+    const card=document.createElement("div");card.className="reg-card "+cls;
+    card.innerHTML=`
+      <div class="reg-top">
+        <div class="reg-idx">${idx+1}</div>
+        <div class="reg-name">${r.name}</div>
+        <div class="reg-fee">$${r.fee.toLocaleString()}</div>
+        ${isCoach?`<button class="reg-del" onclick="handleDel('${r.id}','${r.name}')">🗑</button>`:""}
+      </div>
+      <div class="reg-tags">
+        <span class="tag tag-comp">${r.comp}</span>
+        ${r.grade?`<span class="tag tag-grade">${r.grade}</span>`:""}
+        ${r.belt?`<span class="tag tag-belt">${r.belt}</span>`:""}
+        ${r.gender?`<span class="tag tag-gender">${r.gender}</span>`:""}
+        ${evArr.map(ev=>`<span class="tag tag-event ${ev==="品勢"?"blue":ev==="競速踢擊"?"purple":""}">${ev}</span>`).join("")}
+      </div>
+      <div class="reg-detail">${r.weightClass?"量級："+r.weightClass+"　":""}${r.weight?"體重："+r.weight+"kg　":""}${r.school?"道館："+r.school+"　":""}${r.phone?"📞 "+r.phone:""}${r.note?"　備註："+r.note:""}</div>`;
+    list.appendChild(card);
+  });
+}
+
+function handleDel(id,name){
+  pendingDelId=id;
+  $("modalTitle").innerHTML=`您確定是要刪除<br><span>${name}</span><br>嗎？`;
+  $("modalSub").textContent="刪除後請至 Google Sheet 同步移除";
+  $("modalConfirm").onclick=confirmDel;
+  $("modal").classList.remove("hidden");
+}
+function closeModal(){$("modal").classList.add("hidden");pendingDelId=null;}
+function confirmDel(){if(!pendingDelId)return;regs=regs.filter(r=>r.id!==pendingDelId);closeModal();renderList();showToast("已從畫面移除（請至 Sheet 刪除該列）");}
+
+function exportCSV(){
+  const filtered=getFiltered();
+  const header=["比賽","姓名","性別","年齡","年級","帶級","體重","量級","報名項目","費用","道館","電話","備註"];
+  const rows=filtered.map(r=>{const evArr=Array.isArray(r.events)?r.events:(r.events||"").split("、");return[r.comp,r.name,r.gender,r.age,r.grade,r.belt,r.weight,r.weightClass,evArr.join("、"),r.fee,r.school,r.phone,r.note];});
+  const csv=[header,...rows].map(row=>row.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="跆拳道報名_"+new Date().toLocaleDateString("zh-TW").replace(/\//g,"-")+".csv";a.click();
+  showToast("已匯出 CSV");
+}
+
+function toggleCoachLogin(){
+  if(isCoach){isCoach=false;$("coachBtn").textContent="教練";$("coachBtn").classList.remove("active");$("navCoach").classList.add("hidden");switchNav("form");renderList();showToast("已退出教練模式");return;}
+  $("coachLoginBox").classList.toggle("hidden");
+}
+function doCoachLogin(){
+  if($("coachPwInput").value===COACH_PW){
+    isCoach=true;$("coachBtn").textContent="教練 ✓";$("coachBtn").classList.add("active");
+    $("coachLoginBox").classList.add("hidden");$("coachPwInput").value="";
+    $("navCoach").classList.remove("hidden");renderList();showToast("教練模式已啟用");
+  } else showToast("密碼錯誤");
+}
+
+function renderCoachPanel(){
+  const area=$("compConfigArea");area.innerHTML="";
+  [0,1].forEach(i=>{
+    const c=getComp(i);
+    const div=document.createElement("div");div.className="comp-config";
+    div.innerHTML=`<div class="comp-config-title">比賽 ${i+1}</div>
+      <div class="config-grid">
+        <div class="config-field full"><label>比賽名稱</label><input id="cc${i}_name" value="${c.name}"></div>
+        <div class="config-field"><label>比賽日期</label><input id="cc${i}_date" value="${c.date}"></div>
+        <div class="config-field"><label>報名截止</label><input id="cc${i}_deadline" value="${c.deadline}"></div>
+        <div class="config-field full"><label>比賽地點</label><input id="cc${i}_place" value="${c.place}"></div>
+        <div class="config-field full"><label>報名項目（逗號分隔）</label><input id="cc${i}_events" value="${c.events.join(",")}"></div>
+      </div>
+      <div class="fee-config">${c.events.map(ev=>`<div class="fee-config-item"><label>${ev} 費用</label><input id="cc${i}_fee_${ev}" value="${c.fees[ev]||0}" type="number"></div>`).join("")}</div>`;
+    area.appendChild(div);
+  });
+}
+
+async function saveConfig(){
+  const newCfg={...cfg};
+  [0,1].forEach(i=>{
+    newCfg["comp"+i+"_name"]=$("cc"+i+"_name").value;
+    newCfg["comp"+i+"_date"]=$("cc"+i+"_date").value;
+    newCfg["comp"+i+"_deadline"]=$("cc"+i+"_deadline").value;
+    newCfg["comp"+i+"_place"]=$("cc"+i+"_place").value;
+    const evts=$("cc"+i+"_events").value.split(",").map(s=>s.trim()).filter(Boolean);
+    newCfg["comp"+i+"_events"]=evts.join(",");
+    evts.forEach(ev=>{const el=$("cc"+i+"_fee_"+ev);if(el)newCfg["comp"+i+"_fee_"+ev]=el.value;});
+  });
+  setSyncStatus("儲存設定中…","#e8c547");
+  try{await postGAS({action:"saveConfig",pw:COACH_PW,config:newCfg});cfg=newCfg;renderAll();showToast("比賽設定已儲存 ✓");setSyncStatus("已同步 ✓","#4ade80");}
+  catch(e){showToast("儲存失敗");setSyncStatus("失敗","#f87171");}
+}
+
+async function handleClear(){
+  const btn=$("clearBtn");
+  if(clearConfirm){
+    clearTimeout(clearTimer);clearConfirm=false;
+    btn.textContent="清空所有報名資料";btn.classList.remove("confirm");
+    setSyncStatus("清空中…","#e8c547");
+    try{
+      await postGAS({action:"clearRegs",pw:COACH_PW});
+      localStorage.removeItem(SEEDED_KEY); // 允許下次重新寫入新資料
+      regs=[];renderList();
+      showToast("報名資料已清空 ✓ 準備下次比賽");
+      setSyncStatus("已同步 ✓","#4ade80");
+      $("navList").textContent="📋 報名名單 (0)";
+    }catch(e){showToast("清空失敗");setSyncStatus("失敗","#f87171");}
+  } else {
+    clearConfirm=true;btn.textContent="⚠️ 確定清空？再按一次確認";btn.classList.add("confirm");
+    clearTimer=setTimeout(()=>{clearConfirm=false;btn.textContent="清空所有報名資料";btn.classList.remove("confirm");},5000);
+  }
+}
+
+function switchNav(tab){
+  ["Form","List","Coach"].forEach(t=>{
+    $("page"+t).classList.toggle("hidden",t.toLowerCase()!==tab);
+    $("nav"+t).classList.toggle("on",t.toLowerCase()===tab);
+  });
+  if(tab==="list")renderList();
+  if(tab==="coach")renderCoachPanel();
+}
+
+// ── Init ─────────────────────────────────────────────────
+async function init(){
+  renderAll();
+  await seedIfNeeded(); // 寫入既有資料（只執行一次）
+  await loadAll();      // 從 Sheet 讀取所有資料
+  setInterval(loadAll,30000); // 每30秒自動同步
+}
+init();
+</script>
+
+
+</body></html>
